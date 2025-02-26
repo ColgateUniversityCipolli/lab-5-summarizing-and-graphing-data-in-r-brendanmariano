@@ -1,0 +1,135 @@
+library(tidyverse)
+library(stringr)
+library(xtable)
+library(patchwork)
+#Step 1
+allentown = read_csv(file = "data/essentia.data.allentown.csv") 
+data.tibb = read_csv(file = "data/essentia.data.csv")  
+view(data.tibb)
+feat.funct = function(data, feature, allentown)
+{
+  data |>
+    group_by(artist) |>
+    #2.2
+    summarize(minimum = min(get(feature), na.rm=T), 
+              maximum = max(get(feature), na.rm=T), 
+              LF = quantile(get(feature),.25, na.rm=T) - 1.5*IQR(get(feature), na.rm=T), 
+              UF = quantile(get(feature), .75,na.rm=T) + 1.5*IQR(get(feature), na.rm=T)) |>
+   #2.3
+   mutate(out.of.range = allentown[[feature]] < minimum | allentown[[feature]] > maximum) |>
+   mutate(unusual = allentown[[feature]] < LF | allentown[[feature]] > UF) |>
+   #2.4
+   mutate(description = case_when(out.of.range ~ "Out of Range",
+                                  unusual ~ "Outlying",
+                                  TRUE ~ "Within Range")) 
+}
+#Step 2
+#To store necessary features
+features.keep = tibble(the.frontb = character(), 
+                         man.orch = character(), 
+                         all.get.out = character(), 
+                         feature = character())
+for(cols in colnames(data.tibb))
+{
+  #Analyzes numeric columns
+  if(class(data.tibb[[cols]]) == "numeric")
+  {
+    result = feat.funct(data.tibb, cols, allentown) 
+      newRow = tibble(all.get.out = result$description[1], 
+                       man.orch = result$description[2], 
+                        the.frontb = result$description[3],
+                        feature = cols)
+    if(sum(str_count("Within Range", result$description)) == 1) 
+    {
+      features.keep = features.keep|>
+        bind_rows(newRow)
+    }
+  }
+}
+#finds number of times each band was within range overall
+view(features.keep)
+#NOTE FROM OFFICE HOURS: Can use xtable function to copy and paste table into 
+#sweeve document. 
+#Should know how to create box plots
+#Can make for loop that goes through and creates graphs
+#Find features that matter in general even if they are the same
+
+#Puts select features into 
+write_csv(features.keep, "featuresToKeep.csv")
+
+#Step 4
+#MY SELF CREATED PLOT FOR DISSONANCE
+#Loading Data
+##################################
+dat1 = read_csv("data/essentia.data.csv")
+#################################
+# Make Plot
+#################################
+p1 = ggplot(data = dat1) + 
+  geom_boxplot(aes(x = artist, y = dissonance)) +
+  theme_light()
+#################################
+# Plot of Spectral_Skewness
+#################################
+p3 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = spectral_skewness))) +
+  theme_light()
+
+
+
+
+
+
+
+
+
+#MY PLOT FOR OVERALL LOUDNESS
+####################################
+# Load Data
+####################################
+dat <- read_csv("data/essentia.data.csv")
+####################################
+# Select data for plot
+####################################
+df <- dat %>%
+  dplyr::select("overall_loudness", "artist") %>%
+  filter(!is.na(!!sym("artist")))
+####################################
+# Create Plot
+####################################
+p2 <- ggplot(df, aes(x = !!sym("artist"), y = !!sym("overall_loudness"))) +
+  geom_boxplot(fill = "lightblue", width = 0.5) +
+  get("theme_linedraw")() +
+  xlab("artist") +
+  ylab("overall_loudness") +
+  ggtitle("", "")
+####################################
+# Print Plot
+####################################
+####################################
+# Summarize Data
+####################################
+dat.summary <- dat %>%
+  select(!!sym("overall_loudness"), !!sym("artist")) %>%
+  group_by(!!sym("artist")) %>%
+  summarize(Observations = sum(!is.na(!!sym("overall_loudness"))), Mean = mean(!!sym("overall_loudness"), na.rm = T), `Standard Deviation` = sd(!!sym("overall_loudness"), na.rm = T), Min = min(!!sym("overall_loudness"), na.rm = T), Q1 = quantile(!!sym("overall_loudness"), probs = 0.25, na.rm = T), Median = median(!!sym("overall_loudness"), na.rm = T), Q3 = quantile(!!sym("overall_loudness"), probs = 0.75, na.rm = T), Max = max(!!sym("overall_loudness"), na.rm = T), IQR = IQR(!!sym("overall_loudness"), na.rm = T)) %>%
+  filter(!is.na(!!sym("artist"))) %>%
+  tidyr::complete(!!sym("artist")) %>%
+  mutate_if(is.numeric, round, 4)
+missing.obs <- dat %>%
+  summarize(missing = sum(is.na(!!sym("overall_loudness")) | is.na(!!sym("artist")))) %>%
+  pull(missing)
+dat.summary <- dat.summary %>%
+  ungroup() %>%
+  add_row(`:=`(!!sym("artist"), "Rows with Missing Data"), Observations = missing.obs, Mean = NA, `Standard Deviation` = NA, Min = NA, Q1 = NA, Median = NA, Q3 = NA, Max = NA, IQR = NA)
+####################################
+# Print Data Summary
+####################################
+dat.summary
+
+
+p1 + p2 + p3
+
+
+
+

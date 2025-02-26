@@ -1,0 +1,40 @@
+\documentclass{article}
+\begin{document}
+\section{section5}
+<< size = "scriptsize">>=
+  data(features.keep)
+@
+
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{rllll}
+%   \hline
+%  & The Front Bottoms & Machester Orchestra & All Get Out & feature \\
+%   \hline
+% 1 & Out of Range & Within Range & Outlying & spectral\_skewness \\
+%   2 & Out of Range & Within Range & Out of Range & spectral\_rolloff \\
+%   3 & Out of Range & Within Range & Outlying & spectral\_kurtosis \\
+%   4 & Out of Range & Within Range & Outlying & spectral\_entropy \\
+%   5 & Out of Range & Within Range & Out of Range & spectral\_energyband\_middle\_high \\
+%   6 & Out of Range & Within Range & Out of Range & spectral\_complexity \\
+%   7 & Out of Range & Within Range & Out of Range & spectral\_centroid \\
+%   8 & Out of Range & Within Range & Out of Range & melbands\_spread \\
+%   9 & Out of Range & Within Range & Out of Range & melbands\_flatness\_db \\
+%   10 & Out of Range & Within Range & Out of Range & erbbands\_skewness \\
+%   11 & Out of Range & Within Range & Outlying & erbbands\_flatness\_db \\
+%   12 & Out of Range & Within Range & Outlying & dissonance \\
+%   13 & Out of Range & Within Range & Out of Range & barkbands\_skewness \\
+%   14 & Out of Range & Within Range & Out of Range & barkbands\_kurtosis \\
+%   15 & Out of Range & Within Range & Outlying & barkbands\_flatness\_db \\
+%   16 & Outlying & Within Range & Outlying & average\_loudness \\
+%   17 & Out of Range & Within Range & Outlying & chords\_strength \\
+%   18 & Within Range & Outlying & Out of Range & conj \\
+%   19 & Out of Range & Within Range & Out of Range & Perception \\
+%   20 & Within Range & Outlying & Outlying & OtherP \\
+%   21 & Within Range & Outlying & Outlying & positivewords \\
+%    \hline
+% \end{tabular}
+% \end{table}
+
+
+\end{document}
