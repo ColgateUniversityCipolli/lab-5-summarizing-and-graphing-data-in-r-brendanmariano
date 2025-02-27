@@ -6,6 +6,8 @@ Out of Range,Within Range,Out of Range,erbbands_skewness
 Out of Range,Within Range,Outlying,dissonance
 Outlying,Within Range,Outlying,average_loudness
 Out of Range,Within Range,Outlying,chords_strength
+Out of Range,Within Range,Within Range,valence
+Within Range,Within Range,Outlying,Authentic
 Outlying,Within Range,Within Range,power
 Within Range,Within Range,Out of Range,Cognition
 Out of Range,Within Range,Out of Range,Perception

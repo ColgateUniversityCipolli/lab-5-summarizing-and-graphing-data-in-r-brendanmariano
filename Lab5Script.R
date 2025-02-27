@@ -4,9 +4,7 @@ library(xtable)
 library(patchwork)
 #Step 1
 allentown = read_csv(file = "data/essentia.data.allentown.csv")
-view(allentown)
 data.tibb = read_csv(file = "data/essentia.data.csv")  
-view(data.tibb)
 feat.funct = function(data, feature, allentown)
 {
   data |>
@@ -25,37 +23,40 @@ feat.funct = function(data, feature, allentown)
                                   TRUE ~ "Within Range")) 
 }
 #Step 2
-#To store necessary features
+#To store features for evaluation
 view.features = tibble(the.frontb = character(), 
                        man.orch = character(), 
                        all.get.out = character(), 
                        feature = character())
+#Stores my chosen features
 features.keep = tibble(the.frontb = character(), 
                          man.orch = character(), 
                          all.get.out = character(), 
                          feature = character())
-desired.feat.names = c("spectral_skewness", "melbands_spread",
-                       "Perception", "chords_strength", "erbbands_skewness",
-                       "average_loudness", "danceability", "Cognition",
-                       "power", "dissonance")
-                       
+#Stores names of chosen features
+#Found after analyzing box plots
+desired.feat.names = c("dissonance","spectral_skewness", "melbands_spread", "danceability", 
+                       "chords_strength", "erbbands_skewness", "average_loudness","valence",
+                       "Perception", "Cognition", "power", "Authentic")
+#Iterates through each feature                       
 for(cols in colnames(data.tibb))
 {
-  #Analyzes numeric columns
+  #Analyzes quantitative columns
   if(class(data.tibb[[cols]]) == "numeric")
   {
     result = feat.funct(data.tibb, cols, allentown) 
+      #Potential row to be added
       newRow = tibble(all.get.out = result$description[1], 
                        man.orch = result$description[2], 
                         the.frontb = result$description[3],
                         feature = cols)
+      #Accepts features where Allentown has either one or two artists within range
     if(sum(str_count("Within Range", result$description)) == 2 
        | sum(str_count("Within Range", result$description)) == 1) 
     {
       view.features = view.features|>
         bind_rows(newRow)
-        print(cols)
-        print(result)
+        #Attempts to create table of desired features
         if(cols %in% desired.feat.names)
         { 
           features.keep = features.keep |>
@@ -64,99 +65,108 @@ for(cols in colnames(data.tibb))
     }
   }
 }
-#finds number of times each band was within range overall
-view(view.features)
-#NOTE FROM OFFICE HOURS: Can use xtable function to copy and paste table into 
-#sweeve document. 
-#Should know how to create box plots
-#Can make for loop that goes through and creates graphs
-#Find features that matter in general even if they are the same
-
-#Puts select features into 
+#Puts select features into csv file to be used for table
 write_csv(features.keep, "featuresToKeep.csv")
 
-#Step 4
-#MY SELF CREATED PLOT FOR DISSONANCE
+#Step 4: Creating plots
 #Loading Data
 ##################################
-dat = read_csv("data/essentia.data.csv")
+dat = read_csv("data/essentia.data.csv") |>
+  mutate(artists = case_when(artist == "The Front Bottoms" ~ "TFB",
+                             artist == "Manchester Orchestra" ~ "MO",
+                             artist == "All Get Out" ~ "AGO"))
+
+#Plot features below
 #################################
 # Plots Dissonance
 #################################
-p1 = ggplot(data = dat1) + 
-  geom_boxplot(aes(x = artist, y = dissonance)) +
+p.diss = ggplot(data = dat) + 
+  geom_boxplot(aes(x = artists, y = dissonance)) +
   theme_light() +
   geom_hline(yintercept = pull(allentown, dissonance))
 #################################
 # Plot of Spectral_Skewness
 #################################
-p2 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = spectral_skewness))) +
+p.spec = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = spectral_skewness))) +
   theme_light() +
   geom_hline(yintercept = pull(allentown, spectral_skewness))
 ################################
 # Plots melbands_spread
 ################################
-p3 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = melbands_spread))) +
+p.mel = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = melbands_spread))) +
   theme_light() +
   geom_hline(yintercept = pull(allentown, melbands_spread))
 ################################
-#Plots Perception
-################################
-p4 = ggplot(data = dat1) + 
-    geom_boxplot((aes(x = artist, y = Perception))) + 
-    theme_light() +
-    geom_hline(yintercept = pull(allentown,Perception))
-################################
 #Plots chords_strength
 ################################
-p5 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = chords_strength))) + 
+p.chord = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = chords_strength))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown,chords_strength))
 ################################
 #Plots erbbands_skewness
 ################################
-p6 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = erbbands_skewness))) + 
+p.erbb = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = erbbands_skewness))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown,erbbands_skewness))
 #Plots average_loudness
 ################################
-p7 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = average_loudness))) + 
+p.loud = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = average_loudness))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown, average_loudness))
 #Plots danceability
 ################################
-p8 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = danceability))) + 
+p.dance = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = danceability))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown,danceability))
+#Plots valence
+################################
+p.valence = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = valence))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,valence))
+
+# Lyrics related graphs
+################################
+#Plots Perception
+################################
+p.lperc = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = Perception))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,Perception))
 #Plots Cognition
 ################################
-p9 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = Cognition))) + 
+p.lcog = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = Cognition))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown,Cognition))
 #Plots power
 ################################
-p10 = ggplot(data = dat1) + 
-  geom_boxplot((aes(x = artist, y = power))) + 
+p.lpow = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = power))) + 
   theme_light() +
   geom_hline(yintercept = pull(allentown,power))
-# "spectral_skewness", "melbands_spread",
-# "Perception", "chords_strength", "errbbands_skewness",
-# "average_loudness", "danceability", "Cognition",
-# "power", "discrepancy", "dissonance"
+#Plots authentic
+################################
+p.lauthentic = ggplot(data = dat) + 
+  geom_boxplot((aes(x = artists, y = Authentic))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,Authentic))
+
 
 
 
 ################################
 # Prints the plots
 ################################
-p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8  + p9 + p9 + p10 + p11
+p.diss + p.spec + p.mel + p.dance
+p.chord + p.erbb + p.loud + p.valence  
+p.lperc + p.lcog +p.lpow + p.lauthentic
 
 
 
