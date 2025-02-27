@@ -1,22 +1,11 @@
 the.frontb,man.orch,all.get.out,feature
+Out of Range,Within Range,Within Range,danceability
 Out of Range,Within Range,Outlying,spectral_skewness
-Out of Range,Within Range,Out of Range,spectral_rolloff
-Out of Range,Within Range,Outlying,spectral_kurtosis
-Out of Range,Within Range,Outlying,spectral_entropy
-Out of Range,Within Range,Out of Range,spectral_energyband_middle_high
-Out of Range,Within Range,Out of Range,spectral_complexity
-Out of Range,Within Range,Out of Range,spectral_centroid
 Out of Range,Within Range,Out of Range,melbands_spread
-Out of Range,Within Range,Out of Range,melbands_flatness_db
 Out of Range,Within Range,Out of Range,erbbands_skewness
-Out of Range,Within Range,Outlying,erbbands_flatness_db
 Out of Range,Within Range,Outlying,dissonance
-Out of Range,Within Range,Out of Range,barkbands_skewness
-Out of Range,Within Range,Out of Range,barkbands_kurtosis
-Out of Range,Within Range,Outlying,barkbands_flatness_db
 Outlying,Within Range,Outlying,average_loudness
 Out of Range,Within Range,Outlying,chords_strength
-Within Range,Outlying,Out of Range,conj
+Outlying,Within Range,Within Range,power
+Within Range,Within Range,Out of Range,Cognition
 Out of Range,Within Range,Out of Range,Perception
-Within Range,Outlying,Outlying,OtherP
-Within Range,Outlying,Outlying,positivewords

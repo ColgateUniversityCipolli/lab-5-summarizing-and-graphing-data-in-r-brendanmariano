@@ -3,7 +3,8 @@ library(stringr)
 library(xtable)
 library(patchwork)
 #Step 1
-allentown = read_csv(file = "data/essentia.data.allentown.csv") 
+allentown = read_csv(file = "data/essentia.data.allentown.csv")
+view(allentown)
 data.tibb = read_csv(file = "data/essentia.data.csv")  
 view(data.tibb)
 feat.funct = function(data, feature, allentown)
@@ -25,10 +26,19 @@ feat.funct = function(data, feature, allentown)
 }
 #Step 2
 #To store necessary features
+view.features = tibble(the.frontb = character(), 
+                       man.orch = character(), 
+                       all.get.out = character(), 
+                       feature = character())
 features.keep = tibble(the.frontb = character(), 
                          man.orch = character(), 
                          all.get.out = character(), 
                          feature = character())
+desired.feat.names = c("spectral_skewness", "melbands_spread",
+                       "Perception", "chords_strength", "erbbands_skewness",
+                       "average_loudness", "danceability", "Cognition",
+                       "power", "dissonance")
+                       
 for(cols in colnames(data.tibb))
 {
   #Analyzes numeric columns
@@ -39,15 +49,23 @@ for(cols in colnames(data.tibb))
                        man.orch = result$description[2], 
                         the.frontb = result$description[3],
                         feature = cols)
-    if(sum(str_count("Within Range", result$description)) == 1) 
+    if(sum(str_count("Within Range", result$description)) == 2 
+       | sum(str_count("Within Range", result$description)) == 1) 
     {
-      features.keep = features.keep|>
+      view.features = view.features|>
         bind_rows(newRow)
+        print(cols)
+        print(result)
+        if(cols %in% desired.feat.names)
+        { 
+          features.keep = features.keep |>
+            bind_rows(newRow)
+        }
     }
   }
 }
 #finds number of times each band was within range overall
-view(features.keep)
+view(view.features)
 #NOTE FROM OFFICE HOURS: Can use xtable function to copy and paste table into 
 #sweeve document. 
 #Should know how to create box plots
@@ -61,74 +79,84 @@ write_csv(features.keep, "featuresToKeep.csv")
 #MY SELF CREATED PLOT FOR DISSONANCE
 #Loading Data
 ##################################
-dat1 = read_csv("data/essentia.data.csv")
+dat = read_csv("data/essentia.data.csv")
 #################################
-# Make Plot
+# Plots Dissonance
 #################################
 p1 = ggplot(data = dat1) + 
   geom_boxplot(aes(x = artist, y = dissonance)) +
-  theme_light()
+  theme_light() +
+  geom_hline(yintercept = pull(allentown, dissonance))
 #################################
 # Plot of Spectral_Skewness
 #################################
-p3 = ggplot(data = dat1) + 
+p2 = ggplot(data = dat1) + 
   geom_boxplot((aes(x = artist, y = spectral_skewness))) +
-  theme_light()
+  theme_light() +
+  geom_hline(yintercept = pull(allentown, spectral_skewness))
+################################
+# Plots melbands_spread
+################################
+p3 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = melbands_spread))) +
+  theme_light() +
+  geom_hline(yintercept = pull(allentown, melbands_spread))
+################################
+#Plots Perception
+################################
+p4 = ggplot(data = dat1) + 
+    geom_boxplot((aes(x = artist, y = Perception))) + 
+    theme_light() +
+    geom_hline(yintercept = pull(allentown,Perception))
+################################
+#Plots chords_strength
+################################
+p5 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = chords_strength))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,chords_strength))
+################################
+#Plots erbbands_skewness
+################################
+p6 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = erbbands_skewness))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,erbbands_skewness))
+#Plots average_loudness
+################################
+p7 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = average_loudness))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown, average_loudness))
+#Plots danceability
+################################
+p8 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = danceability))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,danceability))
+#Plots Cognition
+################################
+p9 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = Cognition))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,Cognition))
+#Plots power
+################################
+p10 = ggplot(data = dat1) + 
+  geom_boxplot((aes(x = artist, y = power))) + 
+  theme_light() +
+  geom_hline(yintercept = pull(allentown,power))
+# "spectral_skewness", "melbands_spread",
+# "Perception", "chords_strength", "errbbands_skewness",
+# "average_loudness", "danceability", "Cognition",
+# "power", "discrepancy", "dissonance"
 
 
 
-
-
-
-
-
-
-#MY PLOT FOR OVERALL LOUDNESS
-####################################
-# Load Data
-####################################
-dat <- read_csv("data/essentia.data.csv")
-####################################
-# Select data for plot
-####################################
-df <- dat %>%
-  dplyr::select("overall_loudness", "artist") %>%
-  filter(!is.na(!!sym("artist")))
-####################################
-# Create Plot
-####################################
-p2 <- ggplot(df, aes(x = !!sym("artist"), y = !!sym("overall_loudness"))) +
-  geom_boxplot(fill = "lightblue", width = 0.5) +
-  get("theme_linedraw")() +
-  xlab("artist") +
-  ylab("overall_loudness") +
-  ggtitle("", "")
-####################################
-# Print Plot
-####################################
-####################################
-# Summarize Data
-####################################
-dat.summary <- dat %>%
-  select(!!sym("overall_loudness"), !!sym("artist")) %>%
-  group_by(!!sym("artist")) %>%
-  summarize(Observations = sum(!is.na(!!sym("overall_loudness"))), Mean = mean(!!sym("overall_loudness"), na.rm = T), `Standard Deviation` = sd(!!sym("overall_loudness"), na.rm = T), Min = min(!!sym("overall_loudness"), na.rm = T), Q1 = quantile(!!sym("overall_loudness"), probs = 0.25, na.rm = T), Median = median(!!sym("overall_loudness"), na.rm = T), Q3 = quantile(!!sym("overall_loudness"), probs = 0.75, na.rm = T), Max = max(!!sym("overall_loudness"), na.rm = T), IQR = IQR(!!sym("overall_loudness"), na.rm = T)) %>%
-  filter(!is.na(!!sym("artist"))) %>%
-  tidyr::complete(!!sym("artist")) %>%
-  mutate_if(is.numeric, round, 4)
-missing.obs <- dat %>%
-  summarize(missing = sum(is.na(!!sym("overall_loudness")) | is.na(!!sym("artist")))) %>%
-  pull(missing)
-dat.summary <- dat.summary %>%
-  ungroup() %>%
-  add_row(`:=`(!!sym("artist"), "Rows with Missing Data"), Observations = missing.obs, Mean = NA, `Standard Deviation` = NA, Min = NA, Q1 = NA, Median = NA, Q3 = NA, Max = NA, IQR = NA)
-####################################
-# Print Data Summary
-####################################
-dat.summary
-
-
-p1 + p2 + p3
+################################
+# Prints the plots
+################################
+p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8  + p9 + p9 + p10 + p11
 
 
 
