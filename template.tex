@@ -75,7 +75,7 @@
 \begin{document}
 
 \vspace{-1in}
-\title{Lab 03 -- MATH 240 -- Computational Statistics}
+\title{Lab 05 -- MATH 240 -- Computational Statistics}
 
 \author{
   Brendan Mariano \\
@@ -90,37 +90,34 @@
 
 \begin{multicols}{2}
 \begin{abstract}
-In this lab, we used the tidyverse to group each artist and summarize their data for each song measuring feature. This ultimately allowed us to compare each artists similarity to Allentown for select features and determine who was the biggest contributor. 
+In this lab, we used the \texttt{tidyverse} to group each artist and summarize their data for each song measuring feature. This ultimately allowed us to compare each artists similarity to Allentown for select features and determine who was the biggest contributor. 
 \end{abstract}
 
-\noindent \textbf{Keywords:} Cleaning; Merging; Summarizing
+\noindent \textbf{Keywords:} Tidyverse; Summarizing; ggplot
 
 \section{Introduction}
-The overarching goal for this entire project is to determine whether The Front Bottom or the Manchester Orchestra contributed the most to their joint song Allentown. In this specific lab, we sought to determine how to effectively clean our data to put it into form for statistical analysis. One of the difficulties is that we used several sources to obtain the data, which means that they were initially stored in different places. Some features came from the essentia music extractor, others came from the \texttt{Essentia} models and the data analyzing lyrics came from the LIWC file. In order to have workable data, we extracted important information from each of them and merged it all into one data frame. This gave us the ability to analyze each artist and determine whose lyrics and music features most closely align with Allentown. For the end of the lab, we created 1-3 statistical plots based on a feature in order to reach such a conclusion.
+The overarching goal for this lab was to determine whether The Front Bottoms, Manchester Orchestra or All Get Out contributed most to their joint song Allentown. We had data from three different places: Essentia \citep{essentia}--a program that analyzes the sound of a track, additional Essentia models \citep{essentia_models}, and the LIWC, Linguistic Inquiry and Word Count \citep{liwc}, which provides features about the lyrics of a track. Our job was to determine two things which features were relevant and to then analyze them in order to reach a conclusion about who contributed the most to Allentown. 
+  The methods sections explains how we determined which features were relevant and how we presented them in an effective way. On the other hand, we convey the trends shown for each artist in the results section and analyze our findings to reach an overall conclusion in the discussion section. 
+
 
 \subsection{Intro Subsection}
 
 
 
 \section{Methods}
-  In order to answer the given question, we were given a step by step process. The first entailed
-  extracting desired features for each json file created by the music extractor and putting them into a data frame. Since the
-  music extractor didn't contain all of the features that we needed, we loaded the \texttt{Essentia Model Output.csv}(into a different data frame), which contained data from two other essentia feature extractors. The two extractors had their own value 
-  for many of the features, so we averaged them and created additional columns to store the newly calculated values. At this point, we just needed the data from the lyrics so we loaded that file into another data frame. Since we now had three separate data frames, we merged all them together using the \texttt{merge()} function. Although some people had issues when merging with creating additional rows, I was able to avoid that by using the \texttt{artist, album, and track} as reference when merging. 
+  Overall, the problem that we needed to solve was to determine who contributed most to the song. We had a collection of features from 10s of songs from each of the artists, however, we needed to summarize each of their data. This led us to using a summarize function, which created a table grouping each artist with all of their songs and analyzed their min, max, lower fence and upper fence for each quantitative feature. From here, we now had a table for comparison among artists for each feature. In order to translate this towards our overall goal, we determined whether Allentown's value for each feature was an outlier, out of the range or within the range. This allowed us to determine which features mattered and ultimately create plots displaying them. 
+  When choosing a feature, I ensured that at least one (often two) of the artists was not within range. This was because, if Allentown was within range for every artist, it wouldn't demonstrate any difference in individual contribution, which wouldn't help us to figure out who contributed more. There were 40 different features which fit our criteria, and it was at first difficult to choose. 
+  In order to determine which features were relevant, I researched what each of the features represented-- allowing me to select features that were dissimilar. Lastly, I made sure to have four of the features be lyrical so that I was also analyzing the words rather than solely the sound of the music itself.
+  To ultimately answer our question, we created plots to be used for analysis using ggplot2 \citep{ggplot2}. I found that box plots demonstrated my data effectively because they are easy to understand and I could insert a line indicating the allentown value.
+  
   
 
 \subsection{Methods Subsection}
-  Our final step was to make a conclusion about the overall question of artist contribution
-  to Allentown using 1-3 plots. I used the Shiny app for this portion because the plots looked 
-  better and were easier to create. I settled upon using the avg.valence, spectral energy and instrumental because their values are unique to each artist and because they represented different things-- avg.valence is about the emotional feeling of the song, spectral energy is about the how energy is distributed and instrumental is about the amount of instrument use. 
 \section{Results}
-  For every feature we chose, Manchester Orchestra was closer to the Allentown data compared to The Front Bottoms. For avg valence, Allentown had a value of 4.046 while The Manchester Orchestra has a median of 4.28, which is twice
-  as close as The Front Bottoms with a median of 4.51. \\
-  The Allentown value for spectral energy is 0.179. In comparison, The Manchester Orchestra has a median of .207 and The Front Bottoms has a median of .294, making The Manchester Orchestra more than 80 percent closer to the Allentown value.\\ 
-  The Allentown value for instrumental is 0.029. In comparison, The Manchester Orchestra has a median of .0281 and The Front Bottoms has a median of .0367, which makes the Manchester Orchestra about 70 percent closer to 
-  Allentown. \\
-  Since the Manchester Orchestra more closely resembled Allentown with all three features, 
-  we concluded that they had a greater responsibility in creating Allentown.
+  For the features related to the lyrical portion of the song-- Cognition, Perception, power and Authentic, the results were split mainly split between Manchester Orchestra and the Front Bottoms. Manchester Orchestra was within range for all four of the lyrical features while The Front Bottoms was in range for two and All Get Out was in range for one. This suggests that both contributed to the lyrical portion of Allentown, but Manchester Orchestra contributed the most. 
+  
+    For the features related to the production of the song, the Manchester Orchestra continued to have the most features within its range with comparison to the other bands. For instance, the Allentown value for \texttt{erbbands skewness}, which is otherwise known as the skewness of the error bands feature, is above the fence of All Get Out and the Front Bottoms, but within range of Manchester Orchestra. This suggests that Allentown has a right skewed distribution of error bands, meaning that they have more variation in higher frequencies which can be characteristic of songs by the Manchester Orchestra. Out of the eight different production related features, Allentown was within range for the Manchester Orchestra every single time while it was only within range for All Get Out twice and zero times for The Front Bottoms.
+  
    % \begin{figure}[H]
    %  \begin{center}
    %     \includegraphics[scale=0.5]{avg_valence.pdf}
@@ -148,21 +145,15 @@ The overarching goal for this entire project is to determine whether The Front B
 
 
 \section{Discussion}
-  It was clear that the data from the Manchester Orchestra most closely resembled the data from 
-  Allentown, which suggests that they had a greater contribution. While I am confident in our findings, the majority 
-  of our effort in this lab went towards cleaning the data rather than analyzing it. By only using 
-  3 features, we didn't greatly diversify the features that we actually analyzed. All in all, the conclusion
-  that we were able to make after extracting the proper data was promising, but we need to analyze more features
-  in order to strengthen it. 
+  In total, between the lyrical features and the production related features, Allentown was within the range of Manchester Orchestra 12 times while the The Front Bottoms was within range twice and All Get Out was within the range three times. This suggests that Manchester Orchestra contributed the most across all of portions of the song; however, since The Front Bottoms were within range for half of the lyrical features and none of the production related ones, it is likely that they contributed to the lyrical portion of the song. As for All Get Out, with two indicators within range out of eight for the production and one for lyrical out of four, it is likely that they contributed small amounts to different portions of the song.
+  Since Allentown was within range for a diverse array of features(lyrical and production related) for the Manchester Orchestra, we conclude that they were the greatest contributors to the song. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{2em}
 
-\noindent\textbf{Bibliography:} Note that when you add citations to your bib.bib file \emph{and}
-you cite them in your document, the bibliography section will automatically populate here.
-
+\noindent\textbf{Bibliography:} 
 \begin{tiny}
 \bibliography{bib}
 \end{tiny}
